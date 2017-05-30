@@ -2,7 +2,7 @@
 
 Search for a US city and see the current weather conditions. 
 
-Demo here: https://ampetr89.github.io/dojo-poke-2
+Demo here: https://ampetr89.github.io/dojo-weather
 
 Todo: 
 * Let users toggle between Celcius and Fahrenheit

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weather App</title>
+	<link rel="icon" href="icon.png">
+	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript">
+	</script>
+	<script type="text/javascript" 
+			src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+	</script> 
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			$('#city').focus(); //  put the cursor in the search box upon load
+			function appid(){
+				return '54178bbaa6cdc9806737df15103cd026';
+				//return 'b1b15e88fa797225412429c1c50c122a1';
+			}
+
+			function weatherUrl(city, country='us'){
+				return 'http://api.openweathermap.org/data/2.5/weather?q='+city+','+country+'&appid='+appid();
+
+				 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/
+			}
+
+			function iconUrl(iconId){
+				return 'http://openweathermap.org/img/w/'+iconId+'.png';
+			}
+
+			function KtoC(kelvin){
+				return kelvin - 273.15;
+			}
+			function CtoF(celcius){
+				return celcius*1.8 + 32;
+			}
+			function KtoF(kelvin){
+				return CtoF(KtoC(kelvin));
+			}
+
+			$('#go').hover(
+				function(){
+					//$(this).css('outline', 'black 2px solid');
+					$(this).css('box-shadow', '5px 5px 5px #888888');
+				},
+					function(){
+					$(this).css('box-shadow', 'none');
+				}
+			)
+			$('form').submit(function(){
+				city = $('#city').val();
+
+				link = weatherUrl(city);
+				console.log(link);
+				$.get(link, function(res){
+					$('#result h1').text('Weather for '+res.name);
+					$('#current .icon').attr('src',iconUrl(res.weather[0].icon));
+					$('#current .description').text(res.weather[0].description);
+					$('#current .temp').html(Math.round(KtoF(res.main.temp))+ '&#176;F');
+
+					$('#result').children().css('visibility', 'visible');
+					$('#current').children().css('visibility', 'visible');
+
+					console.log(res);
+
+				}, 'json')
+
+				return false;
+			})
+		})
+	</script>
+</head>
+<body>
+<header></header>
+<main>
+	<section id="search">
+	
+		<form action="index.html">
+			<input id='city' type="text">
+			<input type="submit" id="go" value="&#187;">
+		</form>
+	</section>
+
+
+	<section id="result">
+		<h1></h1>
+		<article id="current" class="weather-box">
+
+			<img class="icon">
+			
+			<p class="description"></p>
+			<h3 class="temp"></h3> <!--TODO let users choose units -->
+
+		</article>
+	</section>
+
+</main>
+<footer></footer>
+</body>
+</html>

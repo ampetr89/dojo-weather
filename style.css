@@ -1,0 +1,79 @@
+*{
+	padding: 0px;
+	margin: 0px;
+}
+
+body{
+	background-color: #b3b3ff;
+	
+}
+header{
+	height: 100px;
+}
+section{
+	margin: 0 auto;
+	text-align: center;
+}
+input[type="text"]{
+	display: inline-block;
+	width: 60%;
+	color: #5c8a8a;
+	font-size: 200%;
+	font-weight: bold;
+	text-align: center;
+	letter-spacing: .01em;
+	font-family: Verdana, Geneva, sans-serif;
+}
+
+#go{
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	vertical-align: top;
+	text-align: center;
+	padding-left: 2px;
+
+	background-color: orange;
+	font-size: 2em;
+	color: yellow;
+	border-radius: 20px;
+}
+
+.weather-box{
+	width: 350px;
+	display: inline-block;
+	border: white 1px solid;
+	margin: 40px;
+	padding: 20px;
+}
+
+.weather-box img, .weather-box p{
+	display: inline-block;
+	vertical-align: middle;
+}
+.icon{
+	width: 75px;
+}
+
+#result *{
+	visibility: hidden;
+}
+#result{
+	margin-top: 50px;
+}
+.description{
+	font-size: 2em;
+	/*font-style: italic;*/
+	color: white;
+}
+
+.temp, p{
+	font-family: Tahoma, Geneva, sans-serif;
+
+}
+.temp{
+	font-size: 200%;
+}
+h1{
+	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}

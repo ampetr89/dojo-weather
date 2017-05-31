@@ -3,20 +3,36 @@
 	margin: 0px;
 }
 
+html{
+	overflow: hidden;
+}
 body{
-	background-color: #b3b3ff;
-	
+	background-color: transparent;/*#b3b3ff;*/
+	color: white;
+
+}
+
+main{
+	height: 100vh;
+	text-align: center;
 }
 header{
-	height: 100px;
+	height: 0px;
 }
-section{
+#search, #result{
 	margin: 0 auto;
 	text-align: center;
 }
-input[type="text"]{
+#result{
+	display: inline-block;
+}
+#search{
+	padding-top: 200px;
+}
+#city{
 	display: inline-block;
 	width: 60%;
+	padding: 5px;
 	color: #5c8a8a;
 	font-size: 200%;
 	font-weight: bold;
@@ -25,6 +41,7 @@ input[type="text"]{
 	font-family: Verdana, Geneva, sans-serif;
 }
 
+/*
 #go{
 	display: inline-block;
 	width: 40px;
@@ -37,7 +54,7 @@ input[type="text"]{
 	font-size: 2em;
 	color: yellow;
 	border-radius: 20px;
-}
+}*/
 
 .weather-box{
 	width: 350px;
@@ -45,6 +62,7 @@ input[type="text"]{
 	border: white 1px solid;
 	margin: 40px;
 	padding: 20px;
+	background-color: #003cb3;
 }
 
 .weather-box img, .weather-box p{
@@ -59,12 +77,13 @@ input[type="text"]{
 	visibility: hidden;
 }
 #result{
-	margin-top: 50px;
+	margin-top: 20px;
+	height: 100px;
 }
 .description{
 	font-size: 2em;
 	/*font-style: italic;*/
-	color: white;
+	
 }
 
 .temp, p{
@@ -76,4 +95,51 @@ input[type="text"]{
 }
 h1{
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+#suggestions{
+	
+	display: block;
+	text-align: center;
+	margin: 0 auto;
+	background-color: white;
+	height: 0;
+	width: 20em;
+	overflow-y: scroll;
+	color: black;
+	font-family: Arial, sans-serif;
+	font-size: 1.5em;
+	
+}
+
+#warning{
+	font-size:1.5em;
+	color: white;
+}
+
+.thunderstorm{
+	background: linear-gradient(to bottom right, black, gray, white);
+	/*background-color: gray;*/
+}
+
+.clear{
+	/*background-color: #99bbff;*/
+	background: radial-gradient(circle at 75%  25%, yellow 1%, #ffff66 5%, transparent 30%, #4d88ff)
+}
+
+.rain{
+	 background:
+	  	-webkit-radial-gradient(ellipse 20px 20px at 0% 0%, rgba(0,255,255, 0.4), rgba(0,0,255, 0.4)),
+  		-webkit-radial-gradient(ellipse 20px 20px at 50% 50%, green, red, transparent);
+	/*background-image: */
+	/*	radial-gradient(ellipse 40px 80px at 0% 0%, red, green, blue, yellow),*/
+		/*radial-gradient(ellipse 60px 90px at 60% 60%, red, green, blue, yellow);*/
+	/*background-size: 90px;*/
+
+}/*
+.rain:before{
+	transform: rotate(60deg);
+}*/
+.default{
+	background-color: #99e6e6;
 }

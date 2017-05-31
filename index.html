@@ -9,37 +9,100 @@
 	<script type="text/javascript" 
 			src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
 	</script> 
+	<script type="text/javascript" 
+			src="lat-lon-math.js">
+	</script> 
 
 	<script type="text/javascript">
+
+		function weatherKey(){
+			return '54178bbaa6cdc9806737df15103cd026';
+			//return 'b1b15e88fa797225412429c1c50c122a1'; //sample key
+		}
+		function mapzenKey(){
+			return 'mapzen-CJhg6da';
+		}
+
+		function googleKey(){
+			return 'AIzaSyAq_YQuwkfEgRZplQK8sSMch_p3_gkSGkg';
+		}
+
+		function weatherUrl(location){
+			// TODO: serialize!
+			location = location.split(', ').slice(0,2).join(',');// remove the country (only doing us)
+			return 'http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
+			// location returned from mapzen contains city,state,country
+
+			 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/
+		}
+
+		function mapzenUrl(text){
+			// doc: https://mapzen.com/documentation/search/search/
+			return 'https://search.mapzen.com/v1/search?text='+text+'&boundary.country=USA&size=50&layers=locality&api_key='+mapzenKey();
+			//&focus.point.lat=38&focus.point.lon=-77
+		}
+
+		function googleUrl(lat, lon){
+			loc = '38,-77';
+			link = 'https://www.google.com/maps/embed/v1/place?key='+googleKey()+'&q='+loc;
+			return link;
+		}
+
+		function iconUrl(iconId){
+			return 'http://openweathermap.org/img/w/'+iconId+'.png';
+		}
+
+		function KtoC(kelvin){
+			return kelvin - 273.15;
+		}
+		function CtoF(celcius){
+			return celcius*1.8 + 32;
+		}
+		function KtoF(kelvin){
+			return CtoF(KtoC(kelvin));
+		}
+
+		function setBackground(weatherCode){
+			// see weather condition codes
+			// http://openweathermap.org/weather-conditions
+			num = Math.floor(weatherCode/100);
+			$('main').removeClass();
+			if(num==2){
+				// thunderstorm
+				$('main').addClass('thunderstorm');
+			}else if(num==3){
+				// drizzle
+				$('main').addClass('drizzle');
+			}else if(num==5){
+				// rain
+				$('main').addClass('rain');
+			}else if(num==6){
+				// snow
+				$('main').addClass('snow');
+			}else if(num==7){
+				// haze, mist, etc
+				$('main').addClass('mist');
+			}else if(num==8){
+				if(weatherCode==800){
+					// clear sky
+					$('main').addClass('clear');
+				}else{
+					// cloudy
+					$('main').addClass('cloudy');
+				}
+			}else{
+				// apply default for anything else
+				$('main').addClass('default');
+			}
+		}
 		$(document).ready(function(){
 
 			$('#city').focus(); //  put the cursor in the search box upon load
-			function appid(){
-				return '54178bbaa6cdc9806737df15103cd026';
-				//return 'b1b15e88fa797225412429c1c50c122a1';
-			}
+			
+			//$('iframe').attr('src', googleUrl());
+			
 
-			function weatherUrl(city, country='us'){
-				return 'http://api.openweathermap.org/data/2.5/weather?q='+city+','+country+'&appid='+appid();
-
-				 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/
-			}
-
-			function iconUrl(iconId){
-				return 'http://openweathermap.org/img/w/'+iconId+'.png';
-			}
-
-			function KtoC(kelvin){
-				return kelvin - 273.15;
-			}
-			function CtoF(celcius){
-				return celcius*1.8 + 32;
-			}
-			function KtoF(kelvin){
-				return CtoF(KtoC(kelvin));
-			}
-
-			$('#go').hover(
+			/*$('#go').hover(
 				function(){
 					//$(this).css('outline', 'black 2px solid');
 					$(this).css('box-shadow', '5px 5px 5px #888888');
@@ -47,25 +110,143 @@
 					function(){
 					$(this).css('box-shadow', 'none');
 				}
-			)
+			)*/
+
+			function citySearch(text){
+				// TODO: use serialize!
+				link = mapzenUrl(text);
+				//console.log(link);
+				$.get(link, function(res){
+					//console.log(res.features);
+					nresults = res.features.length;
+					results = [];
+					for(i=0; i<nresults; i++){
+						feat = res.features[i];
+						newLabel = feat.properties.label;
+						//console.log(res);
+						if(results.indexOf(newLabel)==-1){
+							$('#suggestions ul').append(
+								'<li>'+newLabel+'</li>');
+
+							$('#suggestions ul').children().last().data({
+								'name': newLabel,
+								'lon': feat.geometry.coordinates[0],
+								'lat': feat.geometry.coordinates[1]
+							}); // add lat lon as data
+
+							results.push(newLabel);
+						}
+					}
+					//console.log(results);
+				}, 'json')
+			}
+
+			var minSearchLen = 2;
+			var sugHeight = '160px';
+			$('#city').keyup(function(){
+				text = $('#city').val();
+				$('#suggestions ul').children().remove();
+				
+				if (text.length >= minSearchLen){
+					if($('#suggestions').css('height')=="0px"){
+						//console.log('sliding down..');
+						$('#suggestions').animate({'height': sugHeight}, 400);
+					}
+					
+					citySearch(text);
+				}
+			})
+
+			$(document).on('mouseover', '#suggestions li', function(){
+				$(this).css('background-color', '#c2d6d6');
+			})
+			$(document).on('mouseout', '#suggestions li', function(){
+				$(this).css('background-color', 'white');
+			})
+
+			$(document).on('click', '#suggestions li', function(){
+				
+				$('#city').val($(this).text());
+				$('#city').data($(this).data());
+				//console.log($(this).data());
+				$('#suggestions').animate({'height': '0px'}, 400);
+				$('form').trigger('submit'); // submit the form as soon as the user makes a selection
+			})
+
+			/* //this doesnt work :
+			$('#suggestions').focusout(function(){
+				console.log('lost focus on dropdown');
+				$('#suggestions').animate({'height': '0px'}, 400);
+			})*/
+
+
+			$('#city').click(function(){
+				//console.log('city clicked');
+				if($('#suggestions ul').children().length > 0 &
+					$('#suggestions').css('height')=='0px'){
+					$('#suggestions').animate({'height': sugHeight}, 400);
+				}
+				
+			})
+
 			$('form').submit(function(){
+
 				city = $('#city').val();
+				//console.log('submitting form for', city);
+				$('#suggestions').animate({'height': '0px'}, 400);
+				$('#suggestions ul').children().remove();
+				//$('#warning').text('');
 
 				link = weatherUrl(city);
 				console.log(link);
 				$.get(link, function(res){
-					$('#result h1').text('Weather for '+res.name);
-					$('#current .icon').attr('src',iconUrl(res.weather[0].icon));
-					$('#current .description').text(res.weather[0].description);
-					$('#current .temp').html(Math.round(KtoF(res.main.temp))+ '&#176;F');
+					/* check that the city it pulled is the one the user thinks 
+					theyre getting. if not, show an error message
+					*/
+					console.log($('#city').data());
+					fromMapzenSearch = !$.isEmptyObject($('#city').data());
 
-					$('#result').children().css('visibility', 'visible');
-					$('#current').children().css('visibility', 'visible');
+					if(fromMapzenSearch){
+						mapzenCoords = [$('#city').data('lat'), $('#city').data('lon')];
+						weatherCoords = [res.coord.lat, res.coord.lon];
+						console.log('Location of',$('#city').data('name'), mapzenCoords );
+						console.log('Location of', res.name, weatherCoords);
 
-					console.log(res);
+						distError= getDistanceFromLatLonInKm(
+								weatherCoords[0], weatherCoords[1],
+								mapzenCoords[0], mapzenCoords[1])
+							;
+						console.log('Mapzen and Weather places differ by',distError,'km.')
+					}else{
+						distError = 0;
+					}
+					if(distError < 10 ){
+
+						$('#current h1').text(res.name);
+						console.log("openweather city id",res.id);
+
+						$('#current .icon').attr('src',iconUrl(res.weather[0].icon));
+						$('#current .description').text(res.weather[0].description);
+						$('#current .temp').html(Math.round(KtoF(res.main.temp))+ '&#176;F');
+
+						$('#result').children().css('visibility', 'visible');
+						$('#current').children().css('visibility', 'visible');
+
+						//setBackground(res.cod); // change the background based on the weather condition code
+						
+						console.log('weather result:');
+						console.log(res);
+					}else{
+						$('#result').children().css('visibility', 'hidden');
+						$('#current').children().css('visibility', 'hidden');
+
+						$('#current h1').text('Selected city not found in weather database.');
+						$('#current, #current h1').css('visibility', 'visible');
+					}
 
 				}, 'json')
 
+				$('#city').removeData();
 				return false;
 			})
 		})
@@ -73,27 +254,39 @@
 </head>
 <body>
 <header></header>
-<main>
+<main class="default">
 	<section id="search">
 	
 		<form action="index.html">
 			<input id='city' type="text">
-			<input type="submit" id="go" value="&#187;">
+			<!--<input type="submit" id="go" value="&#187;">-->
 		</form>
+		<div id="suggestions"><ul></ul></div>
 	</section>
 
 
-	<section id="result">
-		<h1></h1>
+	<div id="result">
+		
+		
 		<article id="current" class="weather-box">
-
+			<h1></h1>
 			<img class="icon">
 			
 			<p class="description"></p>
 			<h3 class="temp"></h3> <!--TODO let users choose units -->
 
 		</article>
-	</section>
+
+		<article>
+			<iframe
+			  width="600"
+			  height="450"
+			  src=""
+			  frameborder="0" style="border:0"
+			  allowfullscreen>
+			</iframe>
+		</article>
+	</div>
 
 </main>
 <footer></footer>

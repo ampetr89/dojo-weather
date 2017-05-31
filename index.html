@@ -30,7 +30,7 @@
 		function weatherUrl(location){
 			// TODO: serialize!
 			location = location.split(', ').slice(0,2).join(',');// remove the country (only doing us)
-			return 'http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
+			return 'https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
 			// location returned from mapzen contains city,state,country
 
 			 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/

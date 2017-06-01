@@ -30,6 +30,7 @@
 		function weatherUrl(location){
 			// TODO: serialize!
 			location = location.split(', ').slice(0,2).join(',');// remove the country (only doing us)
+			//
 			return 'https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
 			// location returned from mapzen contains city,state,country
 
@@ -112,33 +113,40 @@
 				}
 			)*/
 
+			function successCity(res){
+				//console.log(res.features);
+				nresults = res.features.length;
+				results = [];
+				for(i=0; i<nresults; i++){
+					feat = res.features[i];
+					newLabel = feat.properties.label;
+					//console.log(res);
+					if(results.indexOf(newLabel)==-1){
+						$('#suggestions ul').append(
+							'<li>'+newLabel+'</li>');
+
+						$('#suggestions ul').children().last().data({
+							'name': newLabel,
+							'lon': feat.geometry.coordinates[0],
+							'lat': feat.geometry.coordinates[1]
+						}); // add lat lon as data
+
+						results.push(newLabel);
+					}
+				}
+			}
 			function citySearch(text){
 				// TODO: use serialize!
 				link = mapzenUrl(text);
 				//console.log(link);
-				$.get(link, function(res){
-					//console.log(res.features);
-					nresults = res.features.length;
-					results = [];
-					for(i=0; i<nresults; i++){
-						feat = res.features[i];
-						newLabel = feat.properties.label;
-						//console.log(res);
-						if(results.indexOf(newLabel)==-1){
-							$('#suggestions ul').append(
-								'<li>'+newLabel+'</li>');
-
-							$('#suggestions ul').children().last().data({
-								'name': newLabel,
-								'lon': feat.geometry.coordinates[0],
-								'lat': feat.geometry.coordinates[1]
-							}); // add lat lon as data
-
-							results.push(newLabel);
-						}
-					}
+				$.ajax({
+					url: link, 
+					global: false, // dont trigger ajaxStart/Stop
+					success: successCity,
+					dataType: 'json',
+					method: 'GET'
 					//console.log(results);
-				}, 'json')
+					})
 			}
 
 			var minSearchLen = 2;
@@ -189,6 +197,60 @@
 				
 			})
 
+			$(document).ajaxStart(function(){
+				$('#loader').css('visibility','visible')
+			})
+
+			$(document).ajaxStop(function(){
+				$('#loader').css('visibility','hidden')
+			})
+
+			function successWeather(res){
+				/* check that the city it pulled is the one the user thinks 
+				theyre getting. if not, show an error message
+				*/
+				console.log($('#city').data());
+				fromMapzenSearch = !$.isEmptyObject($('#city').data());
+
+				if(fromMapzenSearch){
+					mapzenCoords = [$('#city').data('lat'), $('#city').data('lon')];
+					weatherCoords = [res.coord.lat, res.coord.lon];
+					console.log('Location of',$('#city').data('name'), mapzenCoords );
+					console.log('Location of', res.name, weatherCoords);
+
+					distError= getDistanceFromLatLonInKm(
+							weatherCoords[0], weatherCoords[1],
+							mapzenCoords[0], mapzenCoords[1])
+						;
+					console.log('Mapzen and Weather places differ by',distError,'km.')
+				}else{
+					distError = 0;
+				}
+				if(distError < 10 ){
+
+					$('#current h1').text(res.name);
+					console.log("openweather city id",res.id);
+
+					$('#current .icon').attr('src',iconUrl(res.weather[0].icon));
+					$('#current .description').text(res.weather[0].description);
+					$('#current .temp').html(Math.round(KtoF(res.main.temp))+ '&#176;F');
+
+					$('#current').css('visibility', 'visible');
+					$('#current').children().css('visibility', 'visible');
+
+					//setBackground(res.cod); // change the background based on the weather condition code
+					
+					console.log('weather result:');
+					console.log(res);
+				}else{
+					$('#current').css('visibility', 'hidden');
+					$('#current').children().css('visibility', 'hidden');
+
+					$('#current h1').text('Selected city not found in weather database.');
+					$('#current, #current h1').css('visibility', 'visible');
+				}
+			}
+
 			$('form').submit(function(){
 
 				city = $('#city').val();
@@ -199,52 +261,16 @@
 
 				link = weatherUrl(city);
 				console.log(link);
-				$.get(link, function(res){
-					/* check that the city it pulled is the one the user thinks 
-					theyre getting. if not, show an error message
-					*/
-					console.log($('#city').data());
-					fromMapzenSearch = !$.isEmptyObject($('#city').data());
 
-					if(fromMapzenSearch){
-						mapzenCoords = [$('#city').data('lat'), $('#city').data('lon')];
-						weatherCoords = [res.coord.lat, res.coord.lon];
-						console.log('Location of',$('#city').data('name'), mapzenCoords );
-						console.log('Location of', res.name, weatherCoords);
-
-						distError= getDistanceFromLatLonInKm(
-								weatherCoords[0], weatherCoords[1],
-								mapzenCoords[0], mapzenCoords[1])
-							;
-						console.log('Mapzen and Weather places differ by',distError,'km.')
-					}else{
-						distError = 0;
-					}
-					if(distError < 10 ){
-
-						$('#current h1').text(res.name);
-						console.log("openweather city id",res.id);
-
-						$('#current .icon').attr('src',iconUrl(res.weather[0].icon));
-						$('#current .description').text(res.weather[0].description);
-						$('#current .temp').html(Math.round(KtoF(res.main.temp))+ '&#176;F');
-
-						$('#result').children().css('visibility', 'visible');
-						$('#current').children().css('visibility', 'visible');
-
-						//setBackground(res.cod); // change the background based on the weather condition code
-						
-						console.log('weather result:');
-						console.log(res);
-					}else{
-						$('#result').children().css('visibility', 'hidden');
-						$('#current').children().css('visibility', 'hidden');
-
-						$('#current h1').text('Selected city not found in weather database.');
-						$('#current, #current h1').css('visibility', 'visible');
-					}
-
-				}, 'json')
+				/* the main API call:*/
+				//$.get(link, successWeather, 'json');
+				$.ajax({
+					url: link,
+					crossDomain: true,
+					method: 'GET',
+					dataType: 'json',
+					success: successWeather
+				})
 
 				$('#city').removeData();
 				return false;
@@ -259,14 +285,15 @@
 	
 		<form action="index.html">
 			<input id='city' type="text">
+
 			<!--<input type="submit" id="go" value="&#187;">-->
 		</form>
+		<div id="loader"></div>
 		<div id="suggestions"><ul></ul></div>
 	</section>
 
 
 	<div id="result">
-		
 		
 		<article id="current" class="weather-box">
 			<h1></h1>

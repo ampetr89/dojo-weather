@@ -4,6 +4,7 @@
 	<title>Weather App</title>
 	<link rel="icon" href="icon.png">
 	<link rel="stylesheet" href="style.css">
+	<link href='https://fonts.googleapis.com/css?family=Droid Sans' rel='stylesheet'>
 	<script type="text/javascript">
 	</script>
 	<script type="text/javascript" 
@@ -63,6 +64,13 @@
 			return CtoF(KtoC(kelvin));
 		}
 
+		function formatDate(jsDate){
+
+			var dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+			var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  
+  			return dayNames[jsDate.getDay()]+' '+monthNames[jsDate.getMonth()]+' '+jsDate.getDate()+', '+(jsDate.getYear()+1900)
+		}
 		function setBackground(weatherCode){
 			// see weather condition codes
 			// http://openweathermap.org/weather-conditions
@@ -97,21 +105,13 @@
 			}
 		}
 		$(document).ready(function(){
+			$('#loader').hide();
 
 			$('#city').focus(); //  put the cursor in the search box upon load
-			
-			//$('iframe').attr('src', googleUrl());
-			
 
-			/*$('#go').hover(
-				function(){
-					//$(this).css('outline', 'black 2px solid');
-					$(this).css('box-shadow', '5px 5px 5px #888888');
-				},
-					function(){
-					$(this).css('box-shadow', 'none');
-				}
-			)*/
+
+			var today = new Date();
+			$('#date h1').text(formatDate(today));
 
 			function successCity(res){
 				//console.log(res.features);
@@ -150,7 +150,7 @@
 			}
 
 			var minSearchLen = 2;
-			var sugHeight = '160px';
+			var sugHeight = '150px';
 			$('#city').keyup(function(){
 				text = $('#city').val();
 				$('#suggestions ul').children().remove();
@@ -181,6 +181,13 @@
 				$('form').trigger('submit'); // submit the form as soon as the user makes a selection
 			})
 
+			$(window).click(function(e) {
+				id = e.target.id;
+				if(['city','suggestions'].indexOf(id) == -1){
+					$('#suggestions').animate({'height': '0px'}, 400);
+				}
+			})
+
 			/* //this doesnt work :
 			$('#suggestions').focusout(function(){
 				console.log('lost focus on dropdown');
@@ -189,7 +196,9 @@
 
 
 			$('#city').click(function(){
-				//console.log('city clicked');
+				/* if they click on the input box, show the 
+				suggestions drown down if it's not empty
+				*/
 				if($('#suggestions ul').children().length > 0 &
 					$('#suggestions').css('height')=='0px'){
 					$('#suggestions').animate({'height': sugHeight}, 400);
@@ -198,18 +207,21 @@
 			})
 
 			$(document).ajaxStart(function(){
-				$('#loader').css('visibility','visible')
+				$('.weather-box').css('visibility', 'hidden');
+				$('#loader').css('visibility','visible');
+				$('#loader').show();//css('visibility','visible')
 			})
 
 			$(document).ajaxStop(function(){
-				$('#loader').css('visibility','hidden')
+				$('#loader').hide();//css('visibility','hidden')
+				$('.weather-box').children().not('#loader').show();
 			})
 
 			function successWeather(res){
 				/* check that the city it pulled is the one the user thinks 
 				theyre getting. if not, show an error message
 				*/
-				console.log($('#city').data());
+				//console.log($('#city').data());
 				fromMapzenSearch = !$.isEmptyObject($('#city').data());
 
 				if(fromMapzenSearch){
@@ -236,7 +248,9 @@
 					$('#current .temp').html(Math.round(KtoF(res.main.temp))+ '&#176;F');
 
 					$('#current').css('visibility', 'visible');
-					$('#current').children().css('visibility', 'visible');
+					/*$('#current').children().not('#loader').css('visibility', 'visible');*/
+
+					$('#current').children().not('#loader').show();
 
 					//setBackground(res.cod); // change the background based on the weather condition code
 					
@@ -244,10 +258,12 @@
 					console.log(res);
 				}else{
 					$('#current').css('visibility', 'hidden');
-					$('#current').children().css('visibility', 'hidden');
+					/*$('#current').children().css('visibility', 'hidden');*/
+					$('#current').children().not('#loader').hide();
 
 					$('#current h1').text('Selected city not found in weather database.');
-					$('#current, #current h1').css('visibility', 'visible');
+					/*$('#current, #current h1').css('visibility', 'visible');*/
+					$('#current h1').show();
 				}
 			}
 
@@ -260,7 +276,7 @@
 				//$('#warning').text('');
 
 				link = weatherUrl(city);
-				console.log(link);
+				//console.log(link);
 
 				/* the main API call:*/
 				//$.get(link, successWeather, 'json');
@@ -278,44 +294,38 @@
 		})
 	</script>
 </head>
-<body>
-<header></header>
-<main class="default">
+<body class="default">
+<header>
+	<div id="date"><h1></h1></div><!--Friday, June 2nd, 2017-->
+	
+</header>
+<main >
+			
+	
 	<section id="search">
 	
 		<form action="index.html">
-			<input id='city' type="text">
-
+			<input id='city' type="text" placeholder="Search for weather in your city">
 			<!--<input type="submit" id="go" value="&#187;">-->
 		</form>
-		<div id="loader"></div>
+		
 		<div id="suggestions"><ul></ul></div>
 	</section>
 
-
-	<div id="result">
+	<article id="current" class="weather-box">
+		<h1></h1>
+		<p class="description"></p>
+		<div id="loader"></div>
+		<h3 class="temp"></h3> <!--TODO let users choose units -->
+		<img class="icon">
 		
-		<article id="current" class="weather-box">
-			<h1></h1>
-			<img class="icon">
-			
-			<p class="description"></p>
-			<h3 class="temp"></h3> <!--TODO let users choose units -->
 
-		</article>
+	</article>
 
-		<article>
-			<iframe
-			  width="600"
-			  height="450"
-			  src=""
-			  frameborder="0" style="border:0"
-			  allowfullscreen>
-			</iframe>
-		</article>
-	</div>
 
 </main>
-<footer></footer>
+<footer>
+	Powered by &nbsp; <img src="open-weather-logo.svg">
+</footer>
 </body>
 </html>

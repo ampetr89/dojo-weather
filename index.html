@@ -31,8 +31,8 @@
 		function weatherUrl(location){
 			// TODO: serialize!
 			location = location.split(', ').slice(0,2).join(',');// remove the country (only doing us)
-			//https://crossorigin.me/
-			return 'http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
+			//
+			return 'https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
 			// location returned from mapzen contains city,state,country
 
 			 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/
@@ -107,7 +107,7 @@
 			}
 		}
 		$(document).ready(function(){
-			$('#loader').hide();
+			//$('#loader').hide();
 
 			$('#city').focus(); //  put the cursor in the search box upon load
 
@@ -122,7 +122,7 @@
 				for(i=0; i<nresults; i++){
 					feat = res.features[i];
 					newLabel = feat.properties.label;
-					//console.log(res);
+
 					if(results.indexOf(newLabel)==-1){
 						$('#suggestions ul').append(
 							'<li>'+newLabel+'</li>');
@@ -178,7 +178,8 @@
 				
 				$('#city').val($(this).text());
 				$('#city').data($(this).data());
-				//console.log($(this).data());
+				console.log('mapzen city search result:')
+				console.log($('#city').data());
 				$('#suggestions').animate({'height': '0px'}, 400);
 				$('form').trigger('submit'); // submit the form as soon as the user makes a selection
 			})
@@ -210,7 +211,8 @@
 
 			$(document).ajaxStart(function(){
 				$('.weather-box').css('visibility', 'hidden');
-				$('#loader').css('visibility','visible');
+				$('.weather-box').children().not('#loader').hide();
+				//$('#loader').css('visibility','visible');
 				$('#loader').show();//css('visibility','visible')
 			})
 
@@ -229,8 +231,8 @@
 				if(fromMapzenSearch){
 					mapzenCoords = [$('#city').data('lat'), $('#city').data('lon')];
 					weatherCoords = [res.coord.lat, res.coord.lon];
-					console.log('Location of',$('#city').data('name'), mapzenCoords );
-					console.log('Location of', res.name, weatherCoords);
+					console.log('Location of',$('#city').data('name'), '(Mapzen', mapzenCoords );
+					console.log('Location of', res.name, '(OpenWeather)', weatherCoords);
 
 					distError= getDistanceFromLatLonInKm(
 							weatherCoords[0], weatherCoords[1],
@@ -262,12 +264,13 @@
 				}else{
 					$('#current').css('visibility', 'hidden');
 					/*$('#current').children().css('visibility', 'hidden');*/
-					$('#current').children().not('#loader').hide();
+					$('#current').children().not('#loader').not('h1').hide();
 
 					$('#current h1').text('Selected city not found in weather database.');
 					/*$('#current, #current h1').css('visibility', 'visible');*/
 					$('#current h1').show();
 				}
+				$('#city').removeData();
 			}
 
 			$('form').submit(function(){
@@ -291,7 +294,7 @@
 					success: successWeather
 				})
 
-				$('#city').removeData();
+				
 				return false;
 			})
 		})
@@ -300,7 +303,7 @@
 <body>
 <header>
 	<div id="date"><h1></h1></div><!--Friday, June 2nd, 2017-->
-	
+	<p id="units"></p>
 </header>
 <main >
 			

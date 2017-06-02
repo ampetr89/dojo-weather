@@ -134,7 +134,8 @@ form{
 	margin: 40px;
 	padding: 20px;
 	background-color: rgba(0, 60, 179, .8);/*#003cb3;*/
-	box-shadow: 1px 2px  3px 4px #99b3e6;
+	/*box-shadow: 1px 2px  3px 4px #99b3e6;*/
+	
 }
 
 /*.weather-box img, .weather-box p{

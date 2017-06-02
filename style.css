@@ -128,12 +128,13 @@ form{
 }*/
 
 .weather-box{
-	width: 165px;
+	width: 225px;
 	display: inline-block;
-	border: white 1px solid;
+	outline: black 1px solid;
 	margin: 40px;
 	padding: 20px;
 	background-color: rgba(0, 60, 179, .8);/*#003cb3;*/
+	box-shadow: 1px 2px  3px 4px #99b3e6;
 }
 
 /*.weather-box img, .weather-box p{
@@ -188,7 +189,7 @@ article h1{
 }
 
 .thunderstorm{
-	background: linear-gradient(to bottom right, black, gray, white);
+	background: linear-gradient(to bottom right, black, silver, white);
 	/*background-color: gray;*/
 }
 
@@ -206,15 +207,16 @@ article h1{
 	color: #5c5cd6;
 }
 .mist{
-	background: linear-gradient(to bottom, silver 0%, silver 10%,  #ffcccc 20%, silver, white);
-	color: rgb(73,73,73);
+	background: linear-gradient(to bottom, #99b3ff , #d9d9d9, #99b3ff);
+	color: rgb(100,100,100);
 }
 .clear{
 	/*background-color: #99bbff;*/
 	background: radial-gradient(circle at 75%  40%, yellow 6%, #ffff66 8%, transparent 30%, #66ccff)
 }
 .cloudy{
-
+	background: radial-gradient(ellipse 300px 200px at 75% 75%, #e6e6e6 10%, #66b3ff);
+	color: rgb(100,100,100);	
 }
 .default{
 	background-color: #0044cc; 

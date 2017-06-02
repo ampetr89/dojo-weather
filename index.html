@@ -74,6 +74,7 @@
 		function setBackground(weatherCode, selector='#current'){
 			// see weather condition codes
 			// http://openweathermap.org/weather-conditions
+			console.log('weather code',weatherCode);
 			num = Math.floor(weatherCode/100);
 			$(selector).removeClass();
 			$(selector).addClass('weather-box');
@@ -241,7 +242,7 @@
 				}
 				if(distError < 10 ){
 
-					$('#current h1').text(res.name);
+					$('#current h1').text(res.name+', '+res.sys.country);
 					console.log("openweather city id",res.id);
 
 					$('#current .icon').attr('src',iconUrl(res.weather[0].icon));
@@ -253,7 +254,7 @@
 
 					$('#current').children().not('#loader').show();
 
-					var weatherCode = 800; //res.cod;
+					var weatherCode = res.weather[0].id;
 					setBackground(weatherCode, '#current'); // change the background based on the weather condition code
 					
 					console.log('weather result:');

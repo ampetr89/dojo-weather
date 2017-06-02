@@ -9,7 +9,8 @@ html{
 	overflow: hidden;
 }
 body{
-	background-color: transparent;/*#b3b3ff;*/
+	background: linear-gradient(to bottom right, 
+		#79a6d2 8%, #0044cc 15%, #0044cc 70%,#79a6d2);
 	color: white;
 	height: 100vh;
 
@@ -89,7 +90,8 @@ form{
 	font-family: Verdana, Geneva, sans-serif;
 }
 #city::placeholder{
-	opacity: .4;
+	opacity: .3;
+
 }
 
 #loader{
@@ -190,27 +192,31 @@ article h1{
 	/*background-color: gray;*/
 }
 
+
+.drizzle{
+	background: linear-gradient(to bottom right, #6699cc 20%, silver  );
+
+}
+.rain{
+	background: linear-gradient(to bottom right, silver 55%, #6699cc);
+	 
+}
+.snow{
+	background: linear-gradient(to bottom, #99b3e6,  #e6ffff, white);
+	color: #5c5cd6;
+}
+.mist{
+	background: linear-gradient(to bottom, silver 0%, silver 10%,  #ffcccc 20%, silver, white);
+	color: rgb(73,73,73);
+}
 .clear{
 	/*background-color: #99bbff;*/
-	background: radial-gradient(circle at 75%  25%, yellow 1%, #ffff66 5%, transparent 30%, #0055ff)
+	background: radial-gradient(circle at 75%  40%, yellow 6%, #ffff66 8%, transparent 30%, #66ccff)
 }
+.cloudy{
 
-.rain{
-	 /*background:
-	  	-webkit-radial-gradient(ellipse 20px 20px at 0% 0%, rgba(0,255,255, 0.4), rgba(0,0,255, 0.4)),
-  		-webkit-radial-gradient(ellipse 20px 20px at 50% 50%, green, red, transparent);
-  		*/
-	/*background-image: */
-	/*	radial-gradient(ellipse 40px 80px at 0% 0%, red, green, blue, yellow),*/
-		/*radial-gradient(ellipse 60px 90px at 60% 60%, red, green, blue, yellow);*/
-	/*background-size: 90px;*/
-
-}/*
-.rain:before{
-	transform: rotate(60deg);
-}*/
+}
 .default{
-	background-color: #0044cc; /*#99e6e6;*/
-	background: linear-gradient(to bottom right, 
-		#79a6d2 8%, #0044cc 15%, #0044cc 70%,#79a6d2);
+	background-color: #0044cc; 
+	
 }

@@ -31,8 +31,8 @@
 		function weatherUrl(location){
 			// TODO: serialize!
 			location = location.split(', ').slice(0,2).join(',');// remove the country (only doing us)
-			//
-			return 'https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
+			//https://crossorigin.me/
+			return 'http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
 			// location returned from mapzen contains city,state,country
 
 			 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/
@@ -71,37 +71,38 @@
   
   			return dayNames[jsDate.getDay()]+' '+monthNames[jsDate.getMonth()]+' '+jsDate.getDate()+', '+(jsDate.getYear()+1900)
 		}
-		function setBackground(weatherCode){
+		function setBackground(weatherCode, selector='#current'){
 			// see weather condition codes
 			// http://openweathermap.org/weather-conditions
 			num = Math.floor(weatherCode/100);
-			$('main').removeClass();
+			$(selector).removeClass();
+			$(selector).addClass('weather-box');
 			if(num==2){
 				// thunderstorm
-				$('main').addClass('thunderstorm');
+				$(selector).addClass('thunderstorm');
 			}else if(num==3){
 				// drizzle
-				$('main').addClass('drizzle');
+				$(selector).addClass('drizzle');
 			}else if(num==5){
 				// rain
-				$('main').addClass('rain');
+				$(selector).addClass('rain');
 			}else if(num==6){
 				// snow
-				$('main').addClass('snow');
+				$(selector).addClass('snow');
 			}else if(num==7){
 				// haze, mist, etc
-				$('main').addClass('mist');
+				$(selector).addClass('mist');
 			}else if(num==8){
 				if(weatherCode==800){
 					// clear sky
-					$('main').addClass('clear');
+					$(selector).addClass('clear');
 				}else{
 					// cloudy
-					$('main').addClass('cloudy');
+					$(selector).addClass('cloudy');
 				}
 			}else{
 				// apply default for anything else
-				$('main').addClass('default');
+				$(selector).addClass('default');
 			}
 		}
 		$(document).ready(function(){
@@ -252,7 +253,8 @@
 
 					$('#current').children().not('#loader').show();
 
-					//setBackground(res.cod); // change the background based on the weather condition code
+					var weatherCode = 800; //res.cod;
+					setBackground(weatherCode, '#current'); // change the background based on the weather condition code
 					
 					console.log('weather result:');
 					console.log(res);
@@ -294,7 +296,7 @@
 		})
 	</script>
 </head>
-<body class="default">
+<body>
 <header>
 	<div id="date"><h1></h1></div><!--Friday, June 2nd, 2017-->
 	

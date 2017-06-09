@@ -36,6 +36,8 @@ header{
 
 main{
 	text-align: center;
+	width: 100vw;
+	height: calc(100vh - 30px - 20px);
 }
 
 footer{
@@ -86,8 +88,11 @@ form{
 	/* aka the text input box*/
 	display: inline-block;
 	padding: 5px;
+	margin-top: 25vh;
 	width: 95%;
-	color: #5c8a8a;
+	color: rgb(102, 133, 157);/*#5c8a8a;*/
+	background-color: rgba(255,255,255,.5);
+	border: 0 white solid;
 	font-size: 200%;
 	font-weight: bold;
 	text-align: center;
@@ -136,12 +141,13 @@ form{
 }
 
 .weather-box{
-	width: 225px;
+	width: 100%;
 	display: inline-block;
-	outline: black 1px solid;
-	margin: 40px;
-	padding: 20px;
-	background-color: rgba(0, 60, 179, .8);/*#003cb3;*/
+	outline: 0 black solid;
+	margin-top: 40px;
+	padding: 20px 0;
+	color: white;
+	background-color: rgba(0, 60, 179, .2);/*#003cb3;*/
 	/*box-shadow: 1px 2px  3px 4px #99b3e6;*/
 	font-family: sans-serif;
 	

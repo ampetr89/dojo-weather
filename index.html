@@ -77,7 +77,7 @@
 			console.log('weather code',weatherCode);
 			num = Math.floor(weatherCode/100);
 			$(selector).removeClass();
-			$(selector).addClass('weather-box');
+			// $(selector).addClass('weather-box');
 			if(num==2){
 				// thunderstorm
 				$(selector).addClass('thunderstorm');
@@ -264,7 +264,7 @@
 
 					var weatherCode = res.weather[0].id;
 					var dayTime = res.dt > res.sys.sunrise & res.dt < res.sys.sunset;
-					setBackground(weatherCode, dayTime, '#current'); // change the background based on the weather condition code
+					setBackground(weatherCode, dayTime, 'main'); // change the background based on the weather condition code
 					
 					console.log('weather result:');
 					console.log(res);

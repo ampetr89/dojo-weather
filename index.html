@@ -127,6 +127,7 @@
 				//console.log(res.features);
 				nresults = res.features.length;
 				results = [];
+				$('#suggestions ul').children().remove();
 				if(nresults==0){
 
 					$('#suggestions ul').append(

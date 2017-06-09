@@ -127,10 +127,9 @@
 				//console.log(res.features);
 				nresults = res.features.length;
 				results = [];
-				$('#suggestions ul').children().remove();
+				
 				if(nresults==0){
-
-					$('#suggestions ul').append(
+					$('#suggestions ul').html(
 						'<li id="no-results">No Results Found</li>');
 					return
 				}
@@ -154,6 +153,7 @@
 			}
 			function citySearch(text){
 				// TODO: use serialize!
+				$('#suggestions ul').children().remove();
 				link = mapzenUrl(text);
 				//console.log(link);
 				$.ajax({

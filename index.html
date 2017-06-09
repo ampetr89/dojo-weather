@@ -264,7 +264,7 @@
 
 					var weatherCode = res.weather[0].id;
 					var dayTime = res.dt > res.sys.sunrise & res.dt < res.sys.sunset;
-					setBackground(200, dayTime, '#current'); // change the background based on the weather condition code
+					setBackground(weatherCode, dayTime, '#current'); // change the background based on the weather condition code
 					
 					console.log('weather result:');
 					console.log(res);

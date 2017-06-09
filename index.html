@@ -31,8 +31,8 @@
 		function weatherUrl(location){
 			// TODO: serialize!
 			location = location.split(', ').slice(0,2).join(',');// remove the country (only doing us)
-			//
-			return 'https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
+			//https://crossorigin.me/
+			return 'http://api.openweathermap.org/data/2.5/weather?q='+location+',us&appid='+weatherKey();
 			// location returned from mapzen contains city,state,country
 
 			 /*http://api.openweathermap.org/data/2.5/forecast/daily?id=524901&APPID=54178bbaa6cdc9806737df15103cd026*/
@@ -71,7 +71,7 @@
   
   			return dayNames[jsDate.getDay()]+' '+monthNames[jsDate.getMonth()]+' '+jsDate.getDate()+', '+(jsDate.getYear()+1900)
 		}
-		function setBackground(weatherCode, selector='#current'){
+		function setBackground(weatherCode, daytime=true, selector='#current'){
 			// see weather condition codes
 			// http://openweathermap.org/weather-conditions
 			console.log('weather code',weatherCode);
@@ -104,6 +104,12 @@
 			}else{
 				// apply default for anything else
 				$(selector).addClass('default');
+			}
+
+			if(daytime){
+				$(selector).addClass('dayTime');
+			}else{
+				$(selector).addClass('nightTime');
 			}
 		}
 		$(document).ready(function(){
@@ -257,7 +263,8 @@
 					$('#current').children().not('#loader').show();
 
 					var weatherCode = res.weather[0].id;
-					setBackground(weatherCode, '#current'); // change the background based on the weather condition code
+					var dayTime = res.dt > res.sys.sunrise & res.dt < res.sys.sunset;
+					setBackground(200, dayTime, '#current'); // change the background based on the weather condition code
 					
 					console.log('weather result:');
 					console.log(res);
@@ -266,6 +273,7 @@
 					/*$('#current').children().css('visibility', 'hidden');*/
 					$('#current').children().not('#loader').not('h1').hide();
 
+					$('#current h1').css('visibility', 'visible')
 					$('#current h1').text('Selected city not found in weather database.');
 					/*$('#current, #current h1').css('visibility', 'visible');*/
 					$('#current h1').show();

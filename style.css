@@ -182,7 +182,7 @@ form{
 
 .thunderstorm{
 	background: linear-gradient(to bottom right, black, silver, white);
-	/*background-color: gray;*/
+	/* same for day and night*/
 }
 
 .drizzle{
@@ -205,6 +205,11 @@ form{
 	/*background-color: #99bbff;*/
 	background: radial-gradient(circle at 75%  40%, yellow 6%, #ffff66 8%, transparent 30%, #66ccff)
 }
+
+.clear.nightTime{
+	background: linear-gradient(to bottom, #000066, #000099);
+}
+
 .cloudy{
 	background: radial-gradient(ellipse 300px 200px at 75% 75%, #e6e6e6 10%, #66b3ff);
 	color: rgb(100,100,100);	

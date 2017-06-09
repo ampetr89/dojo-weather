@@ -108,8 +108,10 @@
 
 			if(daytime){
 				$(selector).addClass('dayTime');
+				$('#city').addClass('dayTime');
 			}else{
 				$(selector).addClass('nightTime');
+				$('#city').addClass('nightTime');
 			}
 		}
 		$(document).ready(function(){
@@ -125,6 +127,12 @@
 				//console.log(res.features);
 				nresults = res.features.length;
 				results = [];
+				if(nresults==0){
+
+					$('#suggestions ul').append(
+						'<li id="no-results">No Results Found</li>');
+					return
+				}
 				for(i=0; i<nresults; i++){
 					feat = res.features[i];
 					newLabel = feat.properties.label;
@@ -160,6 +168,12 @@
 			var minSearchLen = 2;
 			var sugHeight = '150px';
 			$('#city').keyup(function(){
+				 /*var keyCode = e.keyCode || e.which;
+				 console.log('e', e);
+				  if (keyCode === 13) { 
+				    e.target.preventDefault(); // stop Enter from submitting form
+				    return false;
+				  }*/
 				text = $('#city').val();
 				$('#suggestions ul').children().remove();
 				
@@ -174,20 +188,22 @@
 			})
 
 			$(document).on('mouseover', '#suggestions li', function(){
-				$(this).css('background-color', '#c2d6d6');
+				if($(this).attr('id') != 'no-results'){
+					$(this).css('background-color', '#c2d6d6');
+				}
 			})
 			$(document).on('mouseout', '#suggestions li', function(){
 				$(this).css('background-color', 'white');
 			})
 
 			$(document).on('click', '#suggestions li', function(){
-				
-				$('#city').val($(this).text());
-				$('#city').data($(this).data());
-				console.log('mapzen city search result:')
-				console.log($('#city').data());
-				$('#suggestions').animate({'height': '0px'}, 400);
-				$('form').trigger('submit'); // submit the form as soon as the user makes a selection
+				if($(this).attr('id') != 'no-results'){
+					$('#city').val($(this).text());
+					$('#city').data($(this).data());
+					
+					$('#suggestions').animate({'height': '0px'}, 400);
+					$('form').trigger('submit'); // submit the form as soon as the user makes a selection
+				}
 			})
 
 			$(window).click(function(e) {
@@ -281,27 +297,34 @@
 				$('#city').removeData();
 			}
 
-			$('form').submit(function(){
+			$('form').submit(function(e){
 
-				city = $('#city').val();
-				//console.log('submitting form for', city);
-				$('#suggestions').animate({'height': '0px'}, 400);
-				$('#suggestions ul').children().remove();
-				//$('#warning').text('');
+				console.log('mapzen city search result:')
+				console.log($('#city').data());
+				hasMapzen = !jQuery.isEmptyObject($('#city').data());
 
-				link = weatherUrl(city);
-				//console.log(link);
+				if(hasMapzen){
+					city = $('#city').val();
+					
+					$('#suggestions').animate({'height': '0px'}, 400);
+					$('#suggestions ul').children().remove();
+					//$('#warning').text('');
 
-				/* the main API call:*/
-				//$.get(link, successWeather, 'json');
-				$.ajax({
-					url: link,
-					crossDomain: true,
-					method: 'GET',
-					dataType: 'json',
-					success: successWeather
-				})
+					link = weatherUrl(city);
+					//console.log(link);
 
+					/* the main API call:*/
+					//$.get(link, successWeather, 'json');
+					$.ajax({
+						url: link,
+						crossDomain: true,
+						method: 'GET',
+						dataType: 'json',
+						success: successWeather
+					})
+				}else{
+					e.preventDefault();
+				}
 				
 				return false;
 			})

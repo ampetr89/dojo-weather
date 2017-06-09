@@ -88,7 +88,7 @@ form{
 	/* aka the text input box*/
 	display: inline-block;
 	padding: 5px;
-	margin-top: 25vh;
+	margin-top: 15vh;
 	width: 95%;
 	color: rgb(102, 133, 157);/*#5c8a8a;*/
 	background-color: rgba(255,255,255,.5);
@@ -98,6 +98,14 @@ form{
 	text-align: center;
 	letter-spacing: .01em;
 	font-family: Verdana, Geneva, sans-serif;
+}
+
+
+#city.dayTime{
+	color: rgb(102, 133, 157);/*#5c8a8a;*/
+}
+#city.nightTime{
+	color: white;/*#5c8a8a;*/
 }
 
 #city::placeholder{
@@ -118,6 +126,11 @@ form{
 	font-family: Arial, sans-serif;
 	font-size: 1.25em;
 	
+}
+
+#no-results{
+	color: gray;
+	font-style: italic;
 }
 
 #loader{
